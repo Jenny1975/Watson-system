@@ -51,6 +51,10 @@ class Transaction(models.Model):
 
 class Location(models.Model):
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
+    location_name = models.CharField(max_length=10)
+
+    def __str__(self):
+        return self.location_name
 
 class Bonus(models.Model):
     customer = models.ForeignKey(Customer, on_delete=models.CASCADE)
