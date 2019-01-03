@@ -1,5 +1,7 @@
 from django.db import models
-from django.contrib.auth import get_user_model
+
+
+
 
 # Create your models here.
 
@@ -46,7 +48,11 @@ class Transaction(models.Model):
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
     time = models.DateTimeField(blank=True, null=True)
     amount = models.IntegerField()
-    
+    def total(self):
+        amount = self.amount
+        product = self.product
+        total_amount = amount*product.price
+        return total_amount
 
 
 class Location(models.Model):
@@ -60,5 +66,7 @@ class Bonus(models.Model):
     customer = models.ForeignKey(Customer, on_delete=models.CASCADE)
     rate = models.DecimalField(max_digits=5, decimal_places=2, default = 0)
     period = models.DateTimeField(blank=True, null=True)
+
+
 
 
