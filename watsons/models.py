@@ -1,5 +1,6 @@
 from django.db import models
-
+import time
+import datetime
 
 
 
@@ -16,7 +17,8 @@ class Customer(models.Model):
     )
     customer_name = models.CharField(max_length=30)
     gender = models.CharField(max_length=1, choices = gender_choice, default = MALE)
-    birthday = models.DateTimeField(blank=True, null=True)
+    birthday = models.DateField(blank=True, null=True)
+    marketing_spending = models.PositiveIntegerField()
 
     def __str__(self):
         return self.customer_name
@@ -44,15 +46,47 @@ class Product(models.Model):
 
 
 class Transaction(models.Model):
+    transaction_total = models.IntegerField(blank=True, null=True)
+    transaction_id = models.PositiveIntegerField(blank=True, null=True)
     customer = models.ForeignKey(Customer, on_delete=models.CASCADE)
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
-    time = models.DateTimeField(blank=True, null=True)
+    time = models.DateField(blank=True, null=True)
+    delta_date = models.IntegerField(blank=True, null=True)
     amount = models.IntegerField()
-    def total(self):
-        amount = self.amount
+
+    @staticmethod
+    def create_total(self):
+        product_amount = self.amount
         product = self.product
-        total_amount = amount*product.price
+        # select_product = Product.objects.filter(id = product)
+        total_amount = product_amount*product.price
         return total_amount
+
+    
+    # def create_transaction_num(self):
+    #     num = 0
+    #     last_transaction = Transaction.objects.all[-1]
+    #     time = self.time
+    #     if time == last_transaction.time:
+    #         num = last_transaction.num
+    #     else:
+    #         num = num +1
+    #     return num
+
+    def time_delta(self):
+        date_now = datetime.date.today()
+        delta = date_now - self.time
+        return delta.days
+
+    def save(self):
+        if self.transaction_total is None:
+            self.transaction_total = Transaction.create_total(self)
+        # if self.transaction_id is None:
+        #     self.transaction_id = self.create_transaction_num(self)
+        if self.delta_date is None:
+            self.delta_date = Transaction.time_delta(self)
+        super().save()
+
 
 
 class Location(models.Model):

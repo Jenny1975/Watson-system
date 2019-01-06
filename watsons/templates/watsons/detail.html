@@ -1,0 +1,24 @@
+<div id="container"></div>
+<script src="https://code.highcharts.com/highcharts.src.js"></script>
+<script>
+  Highcharts.chart('container', {
+      chart: {
+          type: 'column'
+      },
+      title: {
+          text: 'Recent Average Amount'
+      },
+      xAxis: {
+          categories: [
+            {% for entry in dataset %}'{{ entry.recent }}'{% if not forloop.last %}, {% endif %}{% endfor %}
+          ]
+      },
+      series: [{
+          name: 'Average amount',
+          data: [
+            {% for entry in dataset %}{{ entry.average_amount }}{% if not forloop.last %}, {% endif %}{% endfor %}
+          ],
+          color: 'green'
+      }]
+  });
+</script>
