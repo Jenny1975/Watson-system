@@ -16,9 +16,49 @@
       series: [{
           name: 'Average amount',
           data: [
-            {% for entry in dataset %}{{ entry.average_amount }}{% if not forloop.last %}, {% endif %}{% endfor %}
+            {% for entry in dataset %}{{ entry.recent_average_amount }}{% if not forloop.last %}, {% endif %}{% endfor %}
           ],
           color: 'green'
+      }]
+  });
+  Highcharts.chart('container', {
+      chart: {
+          type: 'column'
+      },
+      title: {
+          text: 'Frequency Average Amount'
+      },
+      xAxis: {
+          categories: [
+            {% for entry in dataset %}'{{ entry.frequency }}'{% if not forloop.last %}, {% endif %}{% endfor %}
+          ]
+      },
+      series: [{
+          name: 'Average amount',
+          data: [
+            {% for entry in dataset %}{{ entry.frequency_average_amount }}{% if not forloop.last %}, {% endif %}{% endfor %}
+          ],
+          color: 'red'
+      }]
+  });
+  Highcharts.chart('container', {
+      chart: {
+          type: 'column'
+      },
+      title: {
+          text: 'Amount Average Amount'
+      },
+      xAxis: {
+          categories: [
+            {% for entry in dataset %}'{{ entry.amount }}'{% if not forloop.last %}, {% endif %}{% endfor %}
+          ]
+      },
+      series: [{
+          name: 'Average amount',
+          data: [
+            {% for entry in dataset %}{{ entry.amount_average_amount }}{% if not forloop.last %}, {% endif %}{% endfor %}
+          ],
+          color: 'blue'
       }]
   });
 </script>

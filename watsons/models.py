@@ -19,9 +19,14 @@ class Customer(models.Model):
     gender = models.CharField(max_length=1, choices = gender_choice, default = MALE)
     birthday = models.DateField(blank=True, null=True)
     marketing_spending = models.PositiveIntegerField()
-    recent_num = 0
+    recent_num = models.IntegerField(blank=True, null=True)
+    frequency_num = models.IntegerField(blank=True, null=True)
+    amount_num = models.IntegerField(blank=True, null=True)
+    average_spending = 0
     def __str__(self):
         return self.customer_name
+
+        
 
 
 class Product(models.Model):

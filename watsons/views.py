@@ -1,5 +1,6 @@
 from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404, render
+from django.db.models import Avg
 # from django.urls import reverse
 # from django.http import JsonResponse
 # import json
@@ -19,47 +20,58 @@ def index(request):
 
 
 def RFM_model(request):
-    transaction_list = Transaction.objects.order_by('delta_date')
     customer_list = Customer.objects.all()
-
-    # customer_1 = []
-    # customer_2 = []
-    # customer_3 = []
-    # customer_4 = []
-    # customer_5 = []
-    # customer_6 = []
-    # customer_7 = []
-    # customer_8 = []
-
-    # for transaction in transaction_list:
-    #     if transaction.customer_id == 1:
-    #         customer_1.append(transaction)
-    #     elif transaction.customer_id == 2:
-    #         customer_2.append(transaction)
-    #     elif transaction.customer_id == 3 :
-    #         customer_3.append(transaction)
-    #     elif transaction.customer_id == 4:
-    #         customer_4.append(transaction)
-    #     elif transaction.customer_id == 5:
-    #         customer_5.append(transaction)
-    #     elif transaction.customer_id == 6:
-    #         customer_6.append(transaction)
-    #     elif transaction.customer_id == 7:
-    #         customer_7.append(transaction)
-    #     else:
-    #         customer_8.append(transaction)
-    
-    # customer_transaction_list = [customer_1, customer_2, customer_3, customer_4, customer_5, customer_6, customer_7, customer_8]
 
     customer_transaction_list = []
     for cm in customer_list:
-        customertransaction_list = cm.transaction_set.order_by('delta_date')
-        customer_transaction_list.append(customertransaction_list)
+        transaction_queryset = cm.transaction_set.order_by('delta_date')
+        customer_transaction_list.append(transaction_queryset)
     
     for customer_t in customer_transaction_list:
-        customer_t.recent_num = create_recent_number(customer_t)
-        # customer_t.append(create_average_spending(customer_t))
+        customer_t[0].recent_num = create_recent_number(customer_t)
+        customer_t[0].frquency_num = create_frequency_number(customer_t)
+        customer_t[0].amount_num = create_amount_number(customer_t)
+        customer_t[0].average_spending = customer_avg(customer_t)
+
+    recent_avg_list = calculate_avg(customer_transaction_list, 1)
+    frquency_avg_list = calculate_avg(customer_transaction_list, 2)
+    amount_avg_list = calculate_avg(customer_transaction_list, 3)
+
+
+
     
+    dataset = [{'recent': 5, 'recent_average_amount': recent_avg_list[4]},
+                {'recent': 4, 'recent_average_amount': recent_avg_list[3]},
+                {'recent': 3, 'recent_average_amount': recent_avg_list[2]},
+                {'recent': 2, 'recent_average_amount': recent_avg_list[1]},
+                {'recent': 1, 'recent_average_amount': recent_avg_list[0]},
+                {'frquency': 5, 'frequency_average_amount': frequency_avg_list[4]},
+                {'frquency': 4, 'frequency_average_amount': frequency_avg_list[3]},
+                {'frquency': 3, 'frequency_average_amount': frequency_avg_list[2]},
+                {'frquency': 2, 'frequency_average_amount': frequency_avg_list[1]},
+                {'frquency': 1, 'frequency_average_amount': frequency_avg_list[0]},
+                {'amount': 5, 'amount_average_amount': amount_avg_list[4]},
+                {'amount': 4, 'amount_average_amount': amount_avg_list[3]},
+                {'amount': 3, 'amount_average_amount': amount_avg_list[2]},
+                {'amount': 2, 'amount_average_amount': amount_avg_list[1]},
+                {'amount': 1, 'amount_average_amount': amount_avg_list[0]},]
+
+
+    return render(request, 'watsons/detail.html', {'dataset': dataset})
+
+
+def customer_avg(customer_query):
+    total = 0
+    count = 0
+    for c in customer_query:
+        total += c.transaction_total
+        count += 1
+    average = total / count
+
+    return average
+
+
+def calculate_avg(list, attribute):
     count_5 = 0
     count_4 = 0
     count_3 = 0
@@ -70,41 +82,45 @@ def RFM_model(request):
     total_3 = 0
     total_2 = 0
     total_1 = 0
+    customer_transaction_list = list
+        
     
     for customer in customer_transaction_list:
-        if customer.recent_num == 5:
+        if attribute == 1:
+            at = customer.recent_num
+        elif attribute == 2:
+            at = customer.frequency_num
+        else:
+            at = customer.amount_num
+
+        customer_total = customer.average_spending
+
+        if at == 5:
             count_5 += 1
-            total_5 += customer[0].transaction_total
-        elif customer.recent_num == 4:
+            total_5 += customer_total
+        elif at == 4:
             count_4 += 1
-            total_4 += customer[0].transaction_total
-        elif customer.recent_num == 3:
+            total_4 += customer_total
+        elif at == 3:
             count_3 += 1
-            total_3 += customer[0].transaction_total
-        elif customer.recent_num == 2:
+            total_3 += customer_total
+        elif at == 2:
             count_2 += 1
-            total_2 += customer[0].transaction_total
+            total_2 += customer_total
         else:
             count_1 += 1
-            total_1 += customer[0].transaction_total
+            total_1 += customer_total
     
     average_5 = total_5 / count_5
     average_4 = total_4 / count_4
     average_3 = total_3 / count_3
     average_2 = total_2 / count_2
     average_1 = total_1 / count_1
-    
-    dataset = [{'recent': 5, 'average_amount': average_5},
-                {'recent': 4, 'average_amount': average_4},
-                {'recent': 3, 'average_amount': average_3},
-                {'recent': 2, 'average_amount': average_2},
-                {'recent': 1, 'average_amount': average_1},]
 
-
-    return render(request, 'watsons/detail.html', {'dataset': dataset})
+    return [average_1, average_2, average_3, average_4, average_5]
 
 def create_recent_number(list):
-    customer_recent_transaction = list [0]
+    customer_recent_transaction = list[0]
     recent_day = customer_recent_transaction.delta_date
     if recent_day < 7:
         recent_num = 5
@@ -119,13 +135,13 @@ def create_recent_number(list):
     return recent_num
 
 def create_frequency_number(list):
-    customer_recent_transaction = list [-1]
-    first_day = customer_recent_transaction.delta_date
+    customer_first_transaction = list.reverse()[0]
+    first_day = customer_first_transaction.delta_date
     count = 0
     for i in list:
         count += 1
-    frquency = recent_day / count
-    if frquency < 8:
+    frquency_day = first_day / count
+    if frquency_day < 8:
         frquency_num = 5
     elif frquency_day < 15:
         frquency_num = 4
@@ -137,15 +153,21 @@ def create_frequency_number(list):
         frquency_num = 1
     return frquency_num
 
-# def create_average_spending(list):
-#     customer_transaction = list
-#     count = 0
-#     total = 0
-#     for transaction in customer_transaction:
-#         total += transaction.transaction_total
-#         count += 1
-#     average = total / count
-#     return average 
+
+def create_amount_number(list):
+    recent_transaction = list [0]
+    recent_amount = recent_transaction.transaction_total
+    if recent_amount > 1000:
+        amount_num = 5
+    elif recent_amount > 500:
+        amount_num = 4
+    elif recent_amount > 300:
+        amount_num = 3
+    elif recent_amount > 100:
+        amount_num = 2
+    else:
+        amount_num = 1
+    return amount_num
 
 
 
