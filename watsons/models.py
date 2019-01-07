@@ -19,7 +19,7 @@ class Customer(models.Model):
     gender = models.CharField(max_length=1, choices = gender_choice, default = MALE)
     birthday = models.DateField(blank=True, null=True)
     marketing_spending = models.PositiveIntegerField()
-
+    recent_num = 0
     def __str__(self):
         return self.customer_name
 
@@ -101,8 +101,8 @@ class Bonus(models.Model):
 
 class Pocket_other(models.Model):
     customer = models.ForeignKey(Customer, on_delete = models.CASCADE)
-    product = models.ForeignKey(Product, on_delete = models.CASDADE)
-    total_other = model.IntegerField(default = 0)
+    product = models.ForeignKey(Product, on_delete=models.CASCADE)
+    total_other = models.IntegerField(default = 0)
 
 
 
