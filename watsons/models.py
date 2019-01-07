@@ -68,5 +68,10 @@ class Bonus(models.Model):
     period = models.DateTimeField(blank=True, null=True)
 
 
+class Pocket_other(models.Model):
+    customer = models.ForeignKey(Customer, on_delete=models.CASCADE)
+    product = models.ForeignKey(Product, on_delete=models.CASCADE)
+    total_other = models.IntegerField(default = 0)
+
 
 
