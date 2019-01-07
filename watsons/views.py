@@ -41,24 +41,28 @@ def RFM_model(request):
 
 
     
-    dataset = [{'recent': 5, 'recent_average_amount': recent_avg_list[4]},
+    dataset_recent = [{'recent': 5, 'recent_average_amount': recent_avg_list[4]},
                 {'recent': 4, 'recent_average_amount': recent_avg_list[3]},
                 {'recent': 3, 'recent_average_amount': recent_avg_list[2]},
                 {'recent': 2, 'recent_average_amount': recent_avg_list[1]},
-                {'recent': 1, 'recent_average_amount': recent_avg_list[0]},
-                {'frequency': 5, 'frequency_average_amount': frequency_avg_list[4]},
+                {'recent': 1, 'recent_average_amount': recent_avg_list[0]}]
+
+    dataset_frequency = [{'frequency': 5, 'frequency_average_amount': frequency_avg_list[4]},
                 {'frequency': 4, 'frequency_average_amount': frequency_avg_list[3]},
                 {'frequency': 3, 'frequency_average_amount': frequency_avg_list[2]},
                 {'frequency': 2, 'frequency_average_amount': frequency_avg_list[1]},
-                {'frequency': 1, 'frequency_average_amount': frequency_avg_list[0]},
-                {'amount': 5, 'amount_average_amount': amount_avg_list[4]},
+                {'frequency': 1, 'frequency_average_amount': frequency_avg_list[0]}]
+                
+    dataset_amount = [{'amount': 5, 'amount_average_amount': amount_avg_list[4]},
                 {'amount': 4, 'amount_average_amount': amount_avg_list[3]},
                 {'amount': 3, 'amount_average_amount': amount_avg_list[2]},
                 {'amount': 2, 'amount_average_amount': amount_avg_list[1]},
                 {'amount': 1, 'amount_average_amount': amount_avg_list[0]},]
 
 
-    return render(request, 'watsons/detail.html', {'dataset': dataset})
+    return render(request, 'watsons/detail.html', {'dataset_recent': dataset_recent,
+                                                'dataset_frequency': dataset_frequency, 
+                                                'dataset_amount' : dataset_amount})
 
 
 def customer_avg(customer_query):
@@ -141,13 +145,13 @@ def create_frequency_number(list):
     for i in list:
         count += 1
     frquency_day = first_day / count
-    if frquency_day < 8:
+    if frquency_day < 4:
         frquency_num = 5
-    elif frquency_day < 15:
+    elif frquency_day < 7:
         frquency_num = 4
-    elif frquency_day < 22:
+    elif frquency_day < 10:
         frquency_num = 3
-    elif frquency_day < 29:
+    elif frquency_day < 14:
         frquency_num = 2
     else:
         frquency_num = 1
