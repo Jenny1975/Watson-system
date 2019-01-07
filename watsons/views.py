@@ -47,11 +47,13 @@ def RFM_model(request):
             customer_7.append(transaction)
         else:
             customer_8.append(transaction)
+    
     customer_transaction_list = [customer_1, customer_2, customer_3, customer_4, customer_5, customer_6, customer_7, customer_8]
     
     for customer_t in customer_transaction_list:
         customer_t.append(create_recent_number(customer_t))
-        customer_t.append(create_average_spending(customer_t))
+        # customer_t.append(create_average_spending(customer_t))
+    
     count_5 = 0
     count_4 = 0
     count_3 = 0
@@ -62,22 +64,23 @@ def RFM_model(request):
     total_3 = 0
     total_2 = 0
     total_1 = 0
+    
     for customer in customer_transaction_list:
-        if customer[-2] == 5:
+        if customer[-1] == 5:
             count_5 += 1
-            total_5 += customer[-1]
-        elif customer[-2] == 4:
+            total_5 += customer[0].transaction_total
+        elif customer[-1] == 4:
             count_4 += 1
-            total_4 += customer[-1]
-        elif customer[-2] == 3:
+            total_4 += customer[0].transaction_total
+        elif customer[-1] == 3:
             count_3 += 1
-            total_3 += customer[-1]
-        elif customer[-2] == 2:
+            total_3 += customer[0].transaction_total
+        elif customer[-1] == 2:
             count_2 += 1
-            total_2 += customer[-1]
+            total_2 += customer[0].transaction_total
         else:
             count_1 += 1
-            total_1 += customer[-1]
+            total_1 += customer[0].transaction_total
     
     average_5 = total_5 / count_5
     average_4 = total_4 / count_4
@@ -97,8 +100,8 @@ def RFM_model(request):
 def create_recent_number(list):
     customer_recent_transaction = list [0]
     recent_day = customer_recent_transaction.delta_date
-    if recent_day < 8:
-        recent_num = 5
+    if recent_day < 22:
+        recent_num = 2
     elif recent_day < 15:
         recent_num = 4
     elif recent_day < 22:
@@ -109,15 +112,34 @@ def create_recent_number(list):
         recent_num = 1
     return recent_num
 
-def create_average_spending(list):
-    customer_transaction = list
+def create_frequency_number(list):
+    customer_recent_transaction = list [-1]
+    first_day = customer_recent_transaction.delta_date
     count = 0
-    total = 0
-    for transaction in customer_transaction:
-        total += transaction.transaction_total
+    for i in list:
         count += 1
-    average = total / count
-    return average 
+    frquency = recent_day / count
+    if frquency < 8:
+        frquency_num = 5
+    elif frquency_day < 15:
+        frquency_num = 4
+    elif frquency_day < 22:
+        frquency_num = 3
+    elif frquency_day < 29:
+        frquency_num = 2
+    else:
+        frquency_num = 1
+    return frquency_num
+
+# def create_average_spending(list):
+#     customer_transaction = list
+#     count = 0
+#     total = 0
+#     for transaction in customer_transaction:
+#         total += transaction.transaction_total
+#         count += 1
+#     average = total / count
+#     return average 
 
 
 
