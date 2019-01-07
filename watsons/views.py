@@ -23,18 +23,19 @@ def RFM_model(request):
     customer_list = Customer.objects.all()
 
     customer_transaction_list = []
+
     for cm in customer_list:
         transaction_queryset = cm.transaction_set.order_by('delta_date')
-        customer_transaction_list.append(transaction_queryset)
+        customer_transaction_list.append({"Customer": cm, "Transaction_Query": transaction_queryset})
     
     for customer_t in customer_transaction_list:
-        customer_t[0].recent_num = create_recent_number(customer_t)
-        customer_t[0].frquency_num = create_frequency_number(customer_t)
-        customer_t[0].amount_num = create_amount_number(customer_t)
-        customer_t[0].average_spending = customer_avg(customer_t)
+        customer_t["recent_num"] = create_recent_number(customer_t["Transaction_Query"])
+        customer_t["frequency_num"] = create_frequency_number(customer_t["Transaction_Query"])
+        customer_t["amount_num"] = create_amount_number(customer_t["Transaction_Query"])
+        customer_t["average_spending"] = customer_avg(customer_t["Transaction_Query"])
 
     recent_avg_list = calculate_avg(customer_transaction_list, 1)
-    frquency_avg_list = calculate_avg(customer_transaction_list, 2)
+    frequency_avg_list = calculate_avg(customer_transaction_list, 2)
     amount_avg_list = calculate_avg(customer_transaction_list, 3)
 
 
@@ -45,11 +46,11 @@ def RFM_model(request):
                 {'recent': 3, 'recent_average_amount': recent_avg_list[2]},
                 {'recent': 2, 'recent_average_amount': recent_avg_list[1]},
                 {'recent': 1, 'recent_average_amount': recent_avg_list[0]},
-                {'frquency': 5, 'frequency_average_amount': frequency_avg_list[4]},
-                {'frquency': 4, 'frequency_average_amount': frequency_avg_list[3]},
-                {'frquency': 3, 'frequency_average_amount': frequency_avg_list[2]},
-                {'frquency': 2, 'frequency_average_amount': frequency_avg_list[1]},
-                {'frquency': 1, 'frequency_average_amount': frequency_avg_list[0]},
+                {'frequency': 5, 'frequency_average_amount': frequency_avg_list[4]},
+                {'frequency': 4, 'frequency_average_amount': frequency_avg_list[3]},
+                {'frequency': 3, 'frequency_average_amount': frequency_avg_list[2]},
+                {'frequency': 2, 'frequency_average_amount': frequency_avg_list[1]},
+                {'frequency': 1, 'frequency_average_amount': frequency_avg_list[0]},
                 {'amount': 5, 'amount_average_amount': amount_avg_list[4]},
                 {'amount': 4, 'amount_average_amount': amount_avg_list[3]},
                 {'amount': 3, 'amount_average_amount': amount_avg_list[2]},
@@ -87,14 +88,13 @@ def calculate_avg(list, attribute):
     
     for customer in customer_transaction_list:
         if attribute == 1:
-            at = customer.recent_num
+            at = customer["recent_num"]
         elif attribute == 2:
-            at = customer.frequency_num
+            at = customer["frequency_num"]
         else:
-            at = customer.amount_num
+            at = customer["amount_num"]
 
-        customer_total = customer.average_spending
-
+        customer_total = customer["average_spending"]
         if at == 5:
             count_5 += 1
             total_5 += customer_total
