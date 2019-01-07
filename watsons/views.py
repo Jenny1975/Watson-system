@@ -91,13 +91,13 @@ def RFM_model(request):
     average_5 = total_5 / count_5
     average_4 = total_4 / count_4
     average_3 = total_3 / count_3
-    # average_2 = total_2 / count_2
+    average_2 = total_2 / count_2
     average_1 = total_1 / count_1
     
     dataset = [{'recent': 5, 'average_amount': average_5},
                 {'recent': 4, 'average_amount': average_4},
                 {'recent': 3, 'average_amount': average_3},
-                {'recent': 2, 'average_amount': 0},
+                {'recent': 2, 'average_amount': average_2},
                 {'recent': 1, 'average_amount': average_1},]
 
 
