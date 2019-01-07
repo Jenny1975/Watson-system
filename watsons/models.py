@@ -24,8 +24,6 @@ class Customer(models.Model):
         return self.customer_name
 
 
-
-
 class Product(models.Model):
     COSMETIC = 'CO'
     SNACK = 'SA'
@@ -100,6 +98,11 @@ class Bonus(models.Model):
     customer = models.ForeignKey(Customer, on_delete=models.CASCADE)
     rate = models.DecimalField(max_digits=5, decimal_places=2, default = 0)
     period = models.DateTimeField(blank=True, null=True)
+
+class Pocket_other(models.Model):
+    customer = models.ForeignKey(Customer, on_delete = models.CASCADE)
+    product = models.ForeignKey(Product, on_delete = models.CASDADE)
+    total_other = model.IntegerField(default = 0)
 
 
 

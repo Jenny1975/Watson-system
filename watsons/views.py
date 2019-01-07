@@ -100,7 +100,7 @@ def RFM_model(request):
 def create_recent_number(list):
     customer_recent_transaction = list [0]
     recent_day = customer_recent_transaction.delta_date
-    if recent_day < 22:
+    if recent_day < 7:
         recent_num = 2
     elif recent_day < 15:
         recent_num = 4
