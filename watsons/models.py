@@ -68,10 +68,34 @@ class Bonus(models.Model):
     period = models.DateTimeField(blank=True, null=True)
 
 
+# below are all new class
+#
+
 class Pocket_other(models.Model):
     customer = models.ForeignKey(Customer, on_delete=models.CASCADE)
-    product = models.ForeignKey(Product, on_delete=models.CASCADE)
-    total_other = models.IntegerField(default = 0)
+    total_Cosmetic = models.IntegerField(default=0)
+    total_Snacks = models.IntegerField(default=0)
+    total_Care = models.IntegerField(default=0)
+
+
+
+class Servive(models.Model):
+    Num = models.IntegerField(default=0)
+    Date = models.IntegerField(default=0)
+    retentention_rate = 0
+    servive_rate = 0
+    respected_customer_num = 0
+    customer_num = 0
+    def count(self,r,s):
+        self.retentention_rate = r
+        self.servive_rate = self.retentention_rate * s
+        self.customer_num = 100*self.servive_rate
+        self.respected_customer_num = self.customer_num*self.Date
+
+
+
+
+
 
 
 
