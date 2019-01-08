@@ -120,5 +120,20 @@ class Staff(models.Model):
         return User.objects.get(id=self.user_id).username
 
 
+class Servive(models.Model):
+    Num = models.IntegerField(default=0)
+    Date = models.IntegerField(default=0)
+    retentention_rate = 0
+    servive_rate = 0
+    respected_customer_num = 0
+    customer_num = 0
+    def count(self,r,s):
+        self.retentention_rate = r
+        self.servive_rate = self.retentention_rate * s
+        self.customer_num = 100*self.servive_rate
+        self.respected_customer_num = self.customer_num*self.Date
+
+
+
 
 
