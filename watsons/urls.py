@@ -6,11 +6,12 @@ from . import views
 urlpatterns = [
     path('', views.index, name='index'),
     path('detail', views.RFM_model, name='RFM'),
+    path('RFM_list', views.RFM_model_list, name='RFM_list'),
     path('listall', views.listall, name='List all'),
     path('create', views.create, name='create'),
     path('show_transaction', views.showTransaction, name='showTransaction'),
     path('home/servive/', views.servive, name='servive'),        #存活率
     path('home/total_rate/', views.total_rate, name='total_rate'),  #個別錢包佔有率
     path('home/rate/', views.rate, name='rate'), 
-    path('', views.home, name='home'),     
+    path('home', views.home, name='home'),     
 ]

@@ -19,7 +19,7 @@ class Customer(models.Model):
     customer_name = models.CharField(max_length=30)
     gender = models.CharField(max_length=1, choices = gender_choice, default = MALE)
     birthday = models.DateField(blank=True, null=True)
-    marketing_spending = models.PositiveIntegerField()
+    marketing_spending = models.PositiveIntegerField(blank=True, null=True)
 
     def __str__(self):
         return self.customer_name
@@ -63,20 +63,9 @@ class Transaction(models.Model):
     def create_total(self):
         product_amount = self.amount
         product = self.product
-        # select_product = Product.objects.filter(id = product)
         total_amount = product_amount*product.price
         return total_amount
 
-    
-    # def create_transaction_num(self):
-    #     num = 0
-    #     last_transaction = Transaction.objects.all[-1]
-    #     time = self.time
-    #     if time == last_transaction.time:
-    #         num = last_transaction.num
-    #     else:
-    #         num = num +1
-    #     return num
 
     def time_delta(self):
         date_now = datetime.date.today()
