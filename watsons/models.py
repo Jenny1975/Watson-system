@@ -35,11 +35,15 @@ class Product(models.Model):
         (SNACK, 'Snacks'),
         (CARE_PRODUCT, 'Care Product'),
     )
+    product_id = models.TextField(default="100000000")
     product_name = models.CharField(max_length=30)
     category = models.CharField(max_length = 2, choices = category_choice, default = COSMETIC )
     price = models.PositiveIntegerField()
     brand = models.IntegerField  # could be a foreignkey ?
     quantity = models.IntegerField()
+    quantity_safe = models.IntegerField(default = 1 )
+    last_modify_date = models.DateTimeField(auto_now=True)
+    created = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return self.product_name

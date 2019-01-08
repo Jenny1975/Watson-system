@@ -13,12 +13,16 @@ from django.db.models import Avg
 from .models import Transaction, Product, Customer
 
 
+
 def index(request):
     latest_transaction_list = Transaction.objects.order_by('-time')[:5]
     context = {'latest_transaction_list': latest_transaction_list}
     return render(request, 'watsons/index.html', context)
 
 
+
+
+#RFM Model start
 def RFM_model(request):
     customer_list = Customer.objects.all()
 
@@ -173,7 +177,17 @@ def create_amount_number(list):
         amount_num = 1
     return amount_num
 
+#RFM Model End 
 
+#Product list Start
+
+def listall(request):
+ 
+    products = Product.objects.all().order_by('-id') #依據id欄位遞減排序顯示所有資料
+    return render(request,'watsons/listall.html',locals())
+
+
+#Product list End
 
 
 

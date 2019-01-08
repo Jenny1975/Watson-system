@@ -5,6 +5,6 @@ from . import views
 
 urlpatterns = [
     path('', views.index, name='index'),
-    # path('chart', views.product_piechart, name='piechart'),
-    path('detail', views.RFM_model, name='RFM')
+    path('detail', views.RFM_model, name='RFM'),
+    path('listall', views.listall, name='List all')
 ]
