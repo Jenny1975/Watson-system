@@ -21,4 +21,5 @@ urlpatterns = [
     path('', views.IndexView, name='index'),
     path('watsons/', include('watsons.urls')),
     path('admin/', admin.site.urls),
+
 ]
