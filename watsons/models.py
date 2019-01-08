@@ -1,4 +1,5 @@
 from django.db import models
+from django.contrib.auth.models import User
 import time
 import datetime
 
@@ -109,6 +110,14 @@ class Pocket_other(models.Model):
     customer = models.ForeignKey(Customer, on_delete = models.CASCADE)
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
     total_other = models.IntegerField(default = 0)
+
+class Staff(models.Model):
+    phone = models.CharField(max_length=50, null=True)
+    isManager = models.BooleanField(default=False)
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return User.objects.get(id=self.user_id).username
 
 
 
