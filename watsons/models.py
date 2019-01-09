@@ -36,7 +36,7 @@ class Product(models.Model):
         (SNACK, 'Snacks'),
         (CARE_PRODUCT, 'Care Product'),
     )
-    #product_id = models.TextField(default="100000000")
+    product_id = models.TextField(default="100000000")
     product_name = models.CharField(max_length=30)
     category = models.CharField(max_length = 2, choices = category_choice, default = COSMETIC )
     price = models.PositiveIntegerField()
