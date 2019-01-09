@@ -36,11 +36,11 @@ class Product(models.Model):
         (SNACK, 'Snacks'),
         (CARE_PRODUCT, 'Care Product'),
     )
-    product_id = models.TextField(default="100000000")
+    #product_id = models.TextField(default="100000000")
     product_name = models.CharField(max_length=30)
     category = models.CharField(max_length = 2, choices = category_choice, default = COSMETIC )
     price = models.PositiveIntegerField()
-    brand = models.IntegerField  # could be a foreignkey ?
+    brand = models.CharField(max_length = 100)  # could be a foreignkey ?
     quantity = models.IntegerField()
     quantity_safe = models.IntegerField(default = 1 )
     last_modify_date = models.DateTimeField(auto_now=True)
@@ -96,9 +96,10 @@ class Bonus(models.Model):
     period = models.DateTimeField(blank=True, null=True)
 
 class Pocket_other(models.Model):
-    customer = models.ForeignKey(Customer, on_delete = models.CASCADE)
-    product = models.ForeignKey(Product, on_delete=models.CASCADE)
-    total_other = models.IntegerField(default = 0)
+    customer = models.ForeignKey(Customer, on_delete=models.CASCADE)
+    total_Cosmetic = models.IntegerField(default=0)
+    total_Snacks = models.IntegerField(default=0)
+    total_Care = models.IntegerField(default=0)
 
 class Staff(models.Model):
     phone = models.CharField(max_length=50, null=True)

@@ -395,16 +395,16 @@ def cal_poc(poc):  #call function  from  rate,total_rate
 
  # call function  from  total_rate
 def cal_rate(poc1,poc2):
-    cost = Customer.objects.order_by('customer_name').all()
+    cost = Customer.objects.all()
     for c in cost:
-        tran = Transaction.objects.order_by('customer').filter(customer_id=c.id)   # 找到顧客交易資料
-        p = poc2.filter(customer_id=c.id)
-        p1 = poc1.filter(customer_id=c.id)                                         # poc1 為此顧客的錢包大小
+        tran = Transaction.objects.filter(customer_id=c.id)   # 找到顧客交易資料
+        p = poc2.get(customer_id=c.id)
+        p1 = poc1.get(customer_id=c.id)                                         # poc1 為此顧客的錢包大小
         p.total_Cosmetic = 0
         p.total_Snacks = 0
         p.total_Care = 0
         for t in tran:                                                             # 找到的交易資訊 依據品類統計
-            pro = Product.objects.filter(product_name=t.product)
+            pro = Product.objects.get(product_name=t.product)
             if pro.category == 'Cosmetic':
                 p.total_Cosmetic = p.total_Cosmetic+t.total
             elif pro.category == 'Snacks':
