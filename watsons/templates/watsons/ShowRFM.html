@@ -22,11 +22,11 @@
         {% for i in customer_transaction_list %}
 
           <tr>
-             <td>{{ i["Customer"].customer_name }}</td>
-             <td>{{ i["recent_num"] }}</td>
-             <td>{{ i["frequency_num"] }}</td>   
-             <td>{{ i["amount_num"] }}</td>
-             <td>{{ i["average_spending"] }}</td>
+             <td>{{ i.Customer.customer_name }}</td>
+             <td>{{ i.recent_num }}</td>
+             <td>{{ i.frequency_num }}</td>   
+             <td>{{ i.amount_num }}</td>
+             <td>{{ i.average_spending }}</td>
              
 
              
