@@ -273,118 +273,55 @@ def RFM_model_list(request):
     new_list = sorted(customer_transaction_list, key = lambda e:(e.__getitem__('recent_num'), e.__getitem__('frequency_num'), \
                                                                     e.__getitem__('amount_num')))
     
-
-
     return render(request, 'watsons/ShowRFM.html', {"customer_transaction_list": new_list})
 
 
-def customer_avg(customer_query):
-    total = 0
-    count = 0
-    for c in customer_query:
-        total += c.transaction_total
-        count += 1
-    average = total / count
+def RFM_model_group(request):
+    customer_list = Customer.objects.all()
 
-    return average
+    customer_transaction_list = []
 
-
-def calculate_avg(list, attribute):
-    count_5 = 0
-    count_4 = 0
-    count_3 = 0
-    count_2 = 0
-    count_1 = 0
-    total_5 = 0
-    total_4 = 0
-    total_3 = 0
-    total_2 = 0
-    total_1 = 0
-    customer_transaction_list = list
-        
+    for cm in customer_list:
+        transaction_queryset = cm.transaction_set.order_by('delta_date')
+        customer_transaction_list.append({"Customer": cm, "Transaction_Query": transaction_queryset})
     
-    for customer in customer_transaction_list:
-        if attribute == 1:
-            at = customer["recent_num"]
-        elif attribute == 2:
-            at = customer["frequency_num"]
-        else:
-            at = customer["amount_num"]
-
-        customer_total = customer["average_spending"]
-        if at == 5:
-            count_5 += 1
-            total_5 += customer_total
-        elif at == 4:
-            count_4 += 1
-            total_4 += customer_total
-        elif at == 3:
-            count_3 += 1
-            total_3 += customer_total
-        elif at == 2:
-            count_2 += 1
-            total_2 += customer_total
-        else:
-            count_1 += 1
-            total_1 += customer_total
     
-    average_5 = total_5 / count_5
-    average_4 = total_4 / count_4
-    average_3 = total_3 / count_3
-    average_2 = total_2 / count_2
-    average_1 = total_1 / count_1
+    for customer_t in customer_transaction_list:
+        customer_t["recent_num"] = create_recent_number(customer_t["Transaction_Query"])
+        customer_t["frequency_num"] = create_frequency_number(customer_t["Transaction_Query"])
+        customer_t["amount_num"] = create_amount_number(customer_t["Transaction_Query"])
+        customer_t["average_spending"] = customer_avg(customer_t["Transaction_Query"])
+        customer_t["RFM_num"] = customer_t["recent_num"]*100+customer_t["frequency_num"]*10+customer_t["amount_num"]
 
-    return [average_1, average_2, average_3, average_4, average_5]
+    RFM_list = []
+    customer_group_list = []
+    for t in customer_transaction_list:
+        rfm_num = t["RFM_num"]
+        temp = {}
+        if rfm_num not in RFM_list:
+            RFM_list.append(rfm_num)
+            temp["RFM_num"] = rfm_num
+            temp["TOTAL"] = t["average_spending"]
+            temp["count"] = 1
+            customer_group_list.append(temp)
+        else:
+            for i in customer_group_list:
+                if i["RFM_num"] == rfm_num:
+                    i["count"] += 1
+                    i["TOTAL"] += t["average_spending"]
+                else:
+                    continue
 
-def create_recent_number(list):
-    customer_recent_transaction = list[0]
-    recent_day = customer_recent_transaction.delta_date
-    if recent_day < 7:
-        recent_num = 5
-    elif recent_day < 15:
-        recent_num = 4
-    elif recent_day < 22:
-        recent_num = 3
-    elif recent_day < 29:
-        recent_num = 2
-    else:
-        recent_num = 1
-    return recent_num
-
-def create_frequency_number(list):
-    customer_first_transaction = list.reverse()[0]
-    first_day = customer_first_transaction.delta_date
-    count = 0
-    for i in list:
-        count += 1
-    frquency_day = first_day / count
-    if frquency_day < 4:
-        frquency_num = 5
-    elif frquency_day < 7:
-        frquency_num = 4
-    elif frquency_day < 10:
-        frquency_num = 3
-    elif frquency_day < 14:
-        frquency_num = 2
-    else:
-        frquency_num = 1
-    return frquency_num
+    for item in customer_group_list:
+        item["AVG"] = item["TOTAL"] / i["count"] 
 
 
-def create_amount_number(list):
-    recent_transaction = list [0]
-    recent_amount = recent_transaction.transaction_total
-    if recent_amount > 1000:
-        amount_num = 5
-    elif recent_amount > 500:
-        amount_num = 4
-    elif recent_amount > 300:
-        amount_num = 3
-    elif recent_amount > 100:
-        amount_num = 2
-    else:
-        amount_num = 1
-    return amount_num
+
+    new_group_list = sorted(customer_group_list, key = lambda e:(e.__getitem__('RFM_num'))
+    
+
+    return render(request, 'watsons/ShowRFMGroup.html', {"new_group_list": new_group_list})
+
 
 #RFM Model End 
 
