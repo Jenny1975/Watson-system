@@ -23,7 +23,7 @@ NOW =  datetime.datetime.now()
 def index(request):
     latest_transaction_list = Transaction.objects.order_by('-time')[:5]
     context = {'latest_transaction_list': latest_transaction_list}
-    return render(request, 'watsons/index.html', context)
+    return render(request, 'watsons/Base.html', context)
 
 def create(request):
     with open('Pfile.csv') as pf:
@@ -263,17 +263,19 @@ def RFM_model_list(request):
         transaction_queryset = cm.transaction_set.order_by('delta_date')
         customer_transaction_list.append({"Customer": cm, "Transaction_Query": transaction_queryset})
     
-    customer_name = []
     
     for customer_t in customer_transaction_list:
         customer_t["recent_num"] = create_recent_number(customer_t["Transaction_Query"])
         customer_t["frequency_num"] = create_frequency_number(customer_t["Transaction_Query"])
         customer_t["amount_num"] = create_amount_number(customer_t["Transaction_Query"])
         customer_t["average_spending"] = customer_avg(customer_t["Transaction_Query"])
+
+    new_list = sorted(customer_transaction_list, key = lambda e:(e.__getitem__('recent_num'), e.__getitem__('frequency_num'), \
+                                                                    e.__getitem__('amount_num')))
     
 
 
-    return render(request, 'watsons/ShowRFM.html', {"customer_transaction_list": customer_transaction_list})
+    return render(request, 'watsons/ShowRFM.html', {"customer_transaction_list": new_list})
 
 
 def customer_avg(customer_query):
