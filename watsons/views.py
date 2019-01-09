@@ -24,7 +24,7 @@ def index(request):
     latest_transaction_list = Transaction.objects.order_by('-time')[:5]
     context = {'latest_transaction_list': latest_transaction_list}
     return render(request, 'watsons/Base.html', context)
-
+             
 def create(request):
     with open('Pfile.csv') as pf:
         first = True
