@@ -317,9 +317,8 @@ def RFM_model_group(request):
 
 
 
-    new_group_list = sorted(customer_group_list, key = lambda e:(e.__getitem__('RFM_num'))
+    new_group_list = sorted(customer_group_list, key = lambda e:(e.__getitem__('RFM_num')))
     
-
     return render(request, 'watsons/ShowRFMGroup.html', {"new_group_list": new_group_list})
 
 

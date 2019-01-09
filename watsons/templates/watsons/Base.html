@@ -43,7 +43,18 @@
                           <span class="icon-bar"></span>
                         </button>
                       </div>
-  
+                      <div id="navbar" class="navbar-collapse collapse">
+                        <ul class="nav navbar-nav">
+                          <li><a href="{% url 'Watsons:index' %}">{{user.username}}</a></li>
+                          
+                          {% block nav %}{% endblock %}
+                        </ul>
+                        <form method="GET" class="navbar-form navbar-right" action="{% url 'accounts:logout' %}">
+                          <button type="submit" value="logout" class="btn btn-success">
+                            Log out
+                          </button>
+                        </form>
+                      </div><!--/.nav-collapse -->
                     </div>
                   </nav>
                   
