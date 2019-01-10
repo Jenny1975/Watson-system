@@ -500,7 +500,7 @@ def Association_Rule(request):
         double_time = cm.transaction_set.values('time').annotate(time_count = Count('time'))
         for d in double_time:
             if d['time_count'] > 1:
-                product = cm.transaction_set.filter('time' == d['time'])
+                product = cm.transaction_set.filter('time'= d['time'])
                 if product not in Association_list:
                     Association_list.append({'Product': product, 'Count' : 1})
                 else:
