@@ -8,7 +8,7 @@ from django.db import models
 from decimal import Decimal
 from .models import Transaction, Product, Customer, Pocket_other, Servive, Promotion
 from .forms import PromotionForm
-from django.db.models import Avg, Sum
+from django.db.models import Avg, Sum, Count
 import matplotlib.pyplot as plt
 from django.http import JsonResponse
 import json
@@ -463,6 +463,35 @@ def BreakEven(request):
     return render(request, 'watsons/BreakEvenList.html', {"new_group_list": new_group_list})
 
 
+def Association_Rule(request):
+    customer_list = Customer.objects.all()
+
+    customer_transaction_list = []
+    Association_list = []
+    
+    for cm in customer_list:
+        double_time = cm.transaction_set.values('time').annotate(time_count = Count('time'))
+        for d in double_time:
+            if d['time_count'] > 1:
+                product = cm.transaction_set.filter('time' == d['time'])
+                if product not in Association_list:
+                    Association_list.append({'Product': product, 'Count' : 1})
+                else:
+                    for p in Association_list:
+                        if p['Product'] == product:
+                            p['Count'] += 1
+                        else:
+                            continue
+            else:
+                continue
+
+        customer_transaction_list.append({'Customer': cm, 'time': double_time})
+
+    
+    return render(request, 'watsons/Association.html', {"Association_list": Association_list, })
+
+
+
 
 #RFM Model End 
 
@@ -554,9 +583,6 @@ def cal_rate(poc2):
 
     return poc2
 #Marketing Part End
-
-
-
 
 
 

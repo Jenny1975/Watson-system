@@ -34,11 +34,27 @@ class Product(models.Model):
     COSMETIC = 'CO'
     SNACK = 'SA'
     CARE_PRODUCT = 'CR'
+    Facial_Cleanser = 'FC'
+    Makeup_Remover = 'MR'
+    Lotion = 'LO'
+    Mask = 'MA'
+    Sunscreen_lotion = 'SL'
+    Mouthwash = 'MW'
+    Toothpaste = 'TP'
+
     category_choice = (
         (COSMETIC, 'Cosmetic'),
         (SNACK, 'Snacks'),
         (CARE_PRODUCT, 'Care Product'),
+        (Facial_Cleanser, 'Facial Cleanser'),
+        (Makeup_Remover, 'Makeup Remover'),
+        (Lotion, 'Lotion'),
+        (Mask, 'Mask'),
+        (Sunscreen_lotion, 'Sunscreen lotion'),
+        (Mouthwash, 'Mouthwash'),
+        (Toothpaste, 'Toothpaste'),
     )
+
     product_id = models.TextField(default="100000000")
     product_name = models.CharField(max_length=30)
     category = models.CharField(max_length = 2, choices = category_choice, default = COSMETIC )
