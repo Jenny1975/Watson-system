@@ -5,12 +5,14 @@
 
 
 <h2>BreakEven</h2>
-
-<form method="POST">
+<br>
+<form method="POST" style="margin = auto;">
     {% csrf_token %}
     {{ form }}
     <input type="submit" value="提交">
 </form>
+
+<br>
 
 <div id="container1"></div>
 
@@ -38,6 +40,8 @@
     });
 
   </script>
+
+<br>
 
 <div class="table-responsive">
     <table class="table table-striped">

@@ -18,5 +18,4 @@ urlpatterns = [
     path('home/servive/', views.servive, name='servive'),        #存活率
     path('home/total_rate/', views.total_rate, name='total_rate'),  #個別錢包佔有率
     path('home/rate/', views.rate, name='rate'), 
-    path('home', views.home, name='home'),     
 ]

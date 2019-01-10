@@ -501,8 +501,9 @@ def servive(request): #存活率
 
 def total_rate(request): #個別錢包佔有率
     poc = Pocket_other.objects.order_by('customer').all()
-    poc2 = Pocket_other.objects.order_by('customer')
-    cal_rate(poc, poc2)
+    dict1 = cal_poc(poc)
+    poc2 = poc
+    cal_rate(poc2)
     context = {'poc2': poc2}
     return render(request, 'watsons/total_rate.html', context)
 
@@ -532,30 +533,22 @@ def cal_poc(poc):  #call function  from  rate,total_rate
 
 
  # call function  from  total_rate
-def cal_rate(poc1,poc2):
-    cost = Customer.objects.all()
-    for c in cost:
-        tran = Transaction.objects.filter(customer_id=c.id)   # 找到顧客交易資料
-        p = poc2.get(customer_id=c.id)
-        p1 = poc1.get(customer_id=c.id)                                         # poc1 為此顧客的錢包大小
-        p.total_Cosmetic = 0
-        p.total_Snacks = 0
-        p.total_Care = 0
-        for t in tran:                                                             # 找到的交易資訊 依據品類統計
-            pro = Product.objects.get(product_name=t.product)
-            if pro.category == 'Cosmetic':
-                p.total_Cosmetic = p.total_Cosmetic+t.total
-            elif pro.category == 'Snacks':
-                p.total_Snacks = p.total_Snacks + t.total
-            elif pro.category == 'Care Product':
-                p.total_Care = p.total_Care + t.total
-        p.total_Cosmetic = p.total_Cosmetic/p1.total_Cosmetic                     # 算出顧客在各品類的錢包佔有率
-        p.total_Snacks = p.total_Snacks/p1.total_Snacks
-        p.total_Care = p.total_Care/p1.total_Care
+def cal_rate(poc2):
+    for p in poc2:
+        try:
+            p.total_Cosmetic = round(80 / p.total_Cosmetic,2)
+        except ZeroDivisionError:
+            p.total_Cosmetic = 0
+        try:
+            p.total_Snacks = round(440 / p.total_Snacks,2)
+        except ZeroDivisionError:
+            p.total_Snacks = 0
+        try:
+            p.total_Care = round(80 / p.total_Care,2)
+        except ZeroDivisionError:
+            p.total_Care = 0
 
-def home(request): #首頁
-
-    return render(request, 'watsons/home.html', locals())
+    return poc2
 #Marketing Part End
 
 
