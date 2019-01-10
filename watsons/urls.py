@@ -11,7 +11,6 @@ urlpatterns = [
     path('RFM/list', views.RFM_model_list, name='RFM_list'),
     path('RFM/group', views.RFM_model_group, name='RFM_group'),
     path('breakeven/list', views.BreakEven, name='BreakEven'),
-    path('breakeven/chart', views.BreakEven_chart, name='BreakEven_chart'),
     path('breakeven/edit', views.get_promotion, name='edit_BreakEven'),
     path('listall', views.listall, name='List all'),
     path('create', views.create, name='create'),

@@ -458,64 +458,6 @@ def BreakEven(request):
     
     return render(request, 'watsons/BreakEvenList.html', {"new_group_list": new_group_list})
 
-def BreakEven_chart(request):
-    customer_list = Customer.objects.all()
-    promotion = Promotion.objects.order_by('-id')[0]
-
-    customer_transaction_list = []
-
-    promotion_delta = promotion.end_time - promotion.start_time
-
-    for cm in customer_list:
-        transaction_queryset = cm.transaction_set.order_by('delta_date')
-        transaction_promotion = []
-        for t in transaction_queryset:
-            if t.time - promotion.start_time < promotion_delta:
-                transaction_promotion.append(t)
-            else:
-                continue
-
-        customer_transaction_list.append({"Customer": cm, "Transaction_Query": transaction_queryset, \
-                                        "Transaction_promotion": transaction_promotion})
-    
-    
-    for customer_t in customer_transaction_list:
-        customer_t["recent_num"] = create_recent_number(customer_t["Transaction_Query"])
-        customer_t["frequency_num"] = create_frequency_number(customer_t["Transaction_Query"])
-        customer_t["amount_num"] = create_amount_number(customer_t["Transaction_Query"])
-        customer_t["promotion_average_spending"] = customer_avg(customer_t["Transaction_promotion"])
-        customer_t["RFM_num"] = customer_t["recent_num"]*100+customer_t["frequency_num"]*10+customer_t["amount_num"]
-
-    RFM_list = []
-    customer_group_list = []
-    for t in customer_transaction_list:
-        rfm_num = t["RFM_num"]
-        temp = {}
-        if rfm_num not in RFM_list:
-            RFM_list.append(rfm_num)
-            temp["RFM_num"] = rfm_num
-            temp["TOTAL"] = t["promotion_average_spending"]
-            temp["count"] = 1
-            customer_group_list.append(temp)
-        else:
-            for i in customer_group_list:
-                if i["RFM_num"] == rfm_num:
-                    i["count"] += 1
-                    i["TOTAL"] += t["promotion_average_spending"]
-                else:
-                    continue
-
-    avg_cost = promotion.amount/len(customer_list)
-    
-    for item in customer_group_list:
-        item["AVG"] = item["TOTAL"] / i["count"] 
-        item["BreakEven_Index"] = (item["AVG"] - avg_cost)*100 / avg_cost
-
-
-
-    new_group_list = sorted(customer_group_list, key = lambda e:(e.__getitem__('RFM_num')))
-    
-    return render(request, 'watsons/BreakEvenChart.html', {"new_group_list": new_group_list})
 
 
 #RFM Model End 
