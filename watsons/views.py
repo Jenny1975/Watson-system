@@ -106,26 +106,42 @@ def uploadTransaction(request):
     return render(request, 'watsons/UploadFile.html', {'f': f})
 
 
-# @login_required
-# def readFile(request):
+def upload_csv(request):
+    data = {}
+    if request.method == 'GET':
+        return render(request, "watsons/UploadFile.html", data)
+    else:
+        csv_file = request.FILES["csv_file"]
+        file_data = csv_file.read().decode("utf-8")		
 
-#     save_path = os.path.join(settings.MEDIA_ROOT, 'uploads', request.FILES['file'])
-#     path = default_storage.save(save_path, request.FILES['file'])
-#     return default_storage.path(path)
-# def handle_uploaded_file(f):
-#     with open('data/name.csv', 'wb+') as destination:
-#         for chunk in f.chunks():
-#             destination.write(chunk)
+        lines = file_data.split("\n")
 
-# def readFile(request):
-#     if request.method == 'POST':
-#         form = UploadFileForm(request.POST, request.FILES)
-#         handle_uploaded_file(request.FILES['file'])
-#         return redirect('/')
-#     else:
-#         form = UploadFileForm()
-#     return HttpResponse('ijij')
+        for line in lines[1:]:
+            each = line.split(',')
+            try:
+                if csv_file.name.startswith('P'):
+                    c, created = Product.objects.get_or_create(product_name=each[0], 
+                                                                category=each[1],
+                                                                price=int(each[2]),
+                                                                quantity=int(each[3]))
+                elif csv_file.name.startswith('C'):
+                    c, created = Customer.objects.get_or_create(customer_name=each[0],
+                                                                gender=each[1])
+                else:
+                    d = random.randint(1,364)
+                    thisTime = NOW + datetime.timedelta(days=d)
+                    c, created = Transaction.objects.get_or_create(customer_id=each[0],
+                                                                product_id=each[1],
+                                                                time=thisTime,
+                                                                amount=each[2])
 
+                if not created:
+                    c.save()
+            except:
+                pass
+
+
+    return render(request, 'watsons:showTransaction')
 
 
 

@@ -1,7 +1,7 @@
 {% extends 'watsons/Base.html' %}
 {% load static from staticfiles %}
 {% block content %}
-<form action="{% url 'readFile' %}" method="POST" enctype="multipart/form-data" class="form-horizontal"> 
+<form action="{% url 'watsons:upload_csv' %}" method="POST" enctype="multipart/form-data" class="form-horizontal"> 
     {% csrf_token %}
     <div class="form-group">
         <label for="name" class="col-md-3 col-sm-3 col-xs-12 control-label">File: </label>
