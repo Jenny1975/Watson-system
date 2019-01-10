@@ -7,17 +7,19 @@ from django.urls import reverse
 from django.db import models
 from decimal import Decimal
 from .models import Transaction, Product, Customer, Pocket_other, Servive, Promotion
-from .forms import PromotionForm
+from .forms import PromotionForm, UploadFileForm
 from django.db.models import Avg, Sum, Count
 import matplotlib.pyplot as plt
 from django.http import JsonResponse
 import json
 from django.views import generic
+from django.conf import settings
 
 import csv
 import random
 import datetime
 import time
+import os
 
 
 NOW =  datetime.datetime.now()
@@ -98,6 +100,31 @@ def showTransaction(request):
 #Show Transaction End
 
     
+@login_required
+def uploadTransaction(request):
+    f = UploadFileForm()
+    return render(request, 'watsons/UploadFile.html', {'f': f})
+
+
+# @login_required
+# def readFile(request):
+
+#     save_path = os.path.join(settings.MEDIA_ROOT, 'uploads', request.FILES['file'])
+#     path = default_storage.save(save_path, request.FILES['file'])
+#     return default_storage.path(path)
+# def handle_uploaded_file(f):
+#     with open('data/name.csv', 'wb+') as destination:
+#         for chunk in f.chunks():
+#             destination.write(chunk)
+
+# def readFile(request):
+#     if request.method == 'POST':
+#         form = UploadFileForm(request.POST, request.FILES)
+#         handle_uploaded_file(request.FILES['file'])
+#         return redirect('/')
+#     else:
+#         form = UploadFileForm()
+#     return HttpResponse('ijij')
 
 
 
