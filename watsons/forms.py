@@ -9,3 +9,7 @@ class PromotionForm(forms.Form):
     class Meta:    
         model = Promotion    
         fields = ('start_time', 'end_time', 'amount')
+
+class UploadFileForm(forms.Form):
+    title = forms.CharField(max_length=50)
+    file = forms.FileField()
