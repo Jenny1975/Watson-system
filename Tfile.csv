@@ -5,3 +5,5 @@ customer_id,product_id,amount
 1,2,2
 3,4,3
 4,1,4
+7,6,45
+7,5,24

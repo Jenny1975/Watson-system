@@ -7,7 +7,7 @@ from django.urls import reverse
 from django.db import models
 from decimal import Decimal
 from .models import Transaction, Product, Customer, Pocket_other, Servive, Promotion
-from .forms import PromotionForm, UploadFileForm
+from .forms import PromotionForm, UploadFileForm, DateForm
 from django.db.models import Avg, Sum
 import matplotlib.pyplot as plt
 from django.http import JsonResponse
@@ -64,18 +64,24 @@ def create(request):
         data = csv.reader(tf, delimiter=',')
         for each in data:
             if first:
-                first =False
+                first = False
                 pass
             else:
+                print(each)
                 d = random.randint(1,364)
                 thisTime = NOW + datetime.timedelta(days=d)
-                c, created = Transaction.objects.get_or_create(customer_id=each[0],
-                                                            product_id=each[1],
+                customer = Customer.objects.get_or_create(id=each[0])
+                print(customer)
+                product = Product.objects.get_or_create(id=each[1])
+                print(product) 
+                c, created = Transaction.objects.get_or_create(customer=customer,
+                                                            product=product,
                                                             time=thisTime,
-                                                            amount=each[2])
-        if not created:
-            c.save()
-    return HttpResponse('You can')
+                                                            amount=int(each[2]))
+                print(c.amount)
+                c.save()
+
+    return redirect('/')
 
 #Show Transaction Start
 @login_required
@@ -112,36 +118,42 @@ def upload_csv(request):
         return render(request, "watsons/UploadFile.html", data)
     else:
         csv_file = request.FILES["csv_file"]
+        
         file_data = csv_file.read().decode("utf-8")		
 
         lines = file_data.split("\n")
 
         for line in lines[1:]:
             each = line.split(',')
-            try:
-                if csv_file.name.startswith('P'):
-                    c, created = Product.objects.get_or_create(product_name=each[0], 
-                                                                category=each[1],
-                                                                price=int(each[2]),
-                                                                quantity=int(each[3]))
-                elif csv_file.name.startswith('C'):
-                    c, created = Customer.objects.get_or_create(customer_name=each[0],
-                                                                gender=each[1])
-                else:
-                    d = random.randint(1,364)
-                    thisTime = NOW + datetime.timedelta(days=d)
-                    c, created = Transaction.objects.get_or_create(customer_id=each[0],
-                                                                product_id=each[1],
-                                                                time=thisTime,
-                                                                amount=each[2])
+            
+            if csv_file.name.startswith('P'):
+                c, created = Product.objects.get_or_create(product_name=each[0], 
+                                                            category=each[1],
+                                                            price=int(each[2]),
+                                                            quantity=int(each[3]))
+            elif csv_file.name.startswith('C'):
+                c, created = Customer.objects.get_or_create(customer_name=each[0],
+                                                            gender=each[1])
+            elif each == ['']:
+                break
+            else:
+                y = request.POST.get('year')
+                m = request.POST.get('month')
+                d = request.POST.get('day')
+                # d = random.randint(0,364)
+                # thisTime = NOW + datetime.timedelta(days=d)
+                thisTime = datetime.date(int(y), int(m), int(d))
+                amount = each[2][:-1]
+                c, created = Transaction.objects.get_or_create(customer_id=int(each[0]),
+                                                            product_id=int(each[1]),
+                                                            time=thisTime,
+                                                            amount=int(amount))
 
-                if not created:
-                    c.save()
-            except:
-                pass
+            if not created:
+                c.save()
 
 
-    return render(request, 'watsons:showTransaction')
+    return redirect(reverse('watsons:showTransaction'))
 
 
 
